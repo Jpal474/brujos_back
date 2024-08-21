@@ -17,7 +17,7 @@ export class Team {
 
     @Column()
     @ApiProperty()
-    ponits: number;
+    points: number;
 
     @Column()
     @ApiProperty()

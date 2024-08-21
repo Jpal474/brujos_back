@@ -1,9 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString } from "class-validator";
 
-
-export class CreateAdminDto{
-
+export class SignUpDTO {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
@@ -29,4 +27,4 @@ export class CreateAdminDto{
     @IsNotEmpty()
     password: string;
 
-} 
+}

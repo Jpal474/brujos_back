@@ -6,13 +6,13 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 export class Category {
     @PrimaryGeneratedColumn('uuid')
     @ApiProperty()
-    categoryID?: string;
+    categoryID: string;
 
-    @Column()
+    @Column({ unique: true})
     @ApiProperty()
     categoryName: string;
 
     @OneToMany(() => Team, (team) => team.category)
     @ApiProperty({ type: () => Team})
-    team: Team[];
+    team?: Team[];
 }

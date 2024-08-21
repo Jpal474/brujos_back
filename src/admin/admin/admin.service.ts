@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Administrator } from './admin.entity';
 import { Repository } from 'typeorm';
@@ -13,29 +13,59 @@ export class AdminService {
         private adminRepository: Repository<Administrator>
     ){}
 
-    async createAdministrator(body: CreateAdminDto): Promise<boolean> {
-        const mail = await this.adminRepository.findOne({
-            where:{
-              mail: body.mail
-            }
-          });
-        if (mail) {
-            throw new HttpException(
-              'Mail already registered',
-              HttpStatus.BAD_REQUEST,
-            );
-          }
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(body.password, salt);
-        body.password = hashedPassword;
-        const admin = this.adminRepository.create(body);
-        try {
-          await this.adminRepository.save(admin);
-          return true;
-        } catch (error) {
-        console.log(error);
-        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    async getAdministratorById(id: string): Promise<Administrator> {
+      try {
+        const administrator = await this.adminRepository.findOneBy({ adminID: id });
+        if (!administrator) {
+          throw new HttpException(
+            `Unauthorized: The admin does not exists`,
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+        return administrator;
+      } catch (error) {
+        throw new HttpException(
+          `BAD REQUEST: There was an error trying to find the admin`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     }
-      
+
+    async updateAdminData(adminID: string, body: UpdateAdminDto): Promise<boolean> {
+      try{
+      const mail = await this.adminRepository.findOne({
+        where:{
+          mail: body.mail
+        }
+      });
+    if (mail && mail.adminID !== adminID) {
+        throw new HttpException(
+          'Mail already registered',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const admin = await this.adminRepository.preload({
+        adminID,
+        ... body,
+      });
+
+      if(!admin) {
+        throw new NotFoundException(`Admin not found`);
+      }
+       this.adminRepository.save(admin);
+       return true;
     }
+    catch(error) {
+      throw new HttpException(error, error.status ? error.status : 500);
+    }
+  
+  }
+
+  async deleteAdmin(id: string): Promise<boolean> {
+    const result = await this.adminRepository.delete(id); //finds the admin by id and deletes the register
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return true;
+  }
 }

@@ -17,6 +17,8 @@ import { InfoModule } from './info/info/info.module';
 import { MatchModule } from './match/match/match.module';
 import { PlayerModule } from './player/player/player.module';
 import { TeamModule } from './team/team/team.module';
+import { AuthModule } from './auth/auth/auth.module';
+import { MailService } from './mail/mail/mail.service';
 
 @Module({
   imports: [
@@ -30,9 +32,10 @@ import { TeamModule } from './team/team/team.module';
     MatchModule,
     PlayerModule,
     TeamModule,
+    AuthModule,
     
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}

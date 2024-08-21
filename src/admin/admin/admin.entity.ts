@@ -26,4 +26,8 @@ phone: string;
 @ApiProperty()
 password: string;
 
+@Column({ default: ''})
+@ApiProperty()
+profileImage?: string;
+
 }
