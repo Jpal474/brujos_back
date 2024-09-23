@@ -19,7 +19,7 @@ export class TeamController {
     @ApiParam({ name: 'id', description:'id of category'})
     @ApiResponse({
         status: 200,
-        description: 'All teams listed by category',
+        description: 'All teams listed by category.',
     })
     public async getAllTeams(@Param('size') size: number, @Param('page') page: number, @Param('id') id: string): Promise <{teams: Team[], pages: number}>{
         return this.teamService.getAllTeamsByCategory(size, page, id);
