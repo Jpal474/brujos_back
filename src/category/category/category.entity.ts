@@ -14,5 +14,5 @@ export class Category {
 
     @OneToMany(() => Team, (team) => team.category)
     @ApiProperty({ type: () => Team})
-    team?: Team[];
+    team:Team[];
 }

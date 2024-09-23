@@ -15,45 +15,49 @@ export class Team {
     @ApiProperty()
     name: string;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     points: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     goalsFor: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     goalsAgainst: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     goalDifference: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     matchesPlayed: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     wins: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     draws: number;
 
-    @Column()
+    @Column({ default: 0})
     @ApiProperty()
     losses: number;
+
+    @Column({ default: ''})
+    @ApiProperty()
+    shieldImage: string;
 
     @OneToMany(() => Player, (player) => player.team)
     @ApiProperty()
     player: Player[];
 
     @ManyToOne(() => Category, (category) => category.team)
-    @ApiProperty()
-    @JoinColumn()
+    @ApiProperty({ type: () => Category})
+    @JoinColumn({ name: 'categoryID'})
     category: Category;
 
     @OneToMany(() => Match, (match) => match.homeTeam)

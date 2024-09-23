@@ -62,10 +62,18 @@ export class AdminService {
   }
 
   async deleteAdmin(id: string): Promise<boolean> {
+    try{
     const result = await this.adminRepository.delete(id); //finds the admin by id and deletes the register
     if (result.affected === 0) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new HttpException(
+        'This admin does not exist',
+        HttpStatus.NOT_FOUND,
+      );
     }
     return true;
+  }
+  catch(error) {
+    throw new HttpException(error, error.status ? error.status : 500);
+  }
   }
 }
