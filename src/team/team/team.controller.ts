@@ -23,7 +23,11 @@ export class TeamController {
         status: 200,
         description: 'All teams listed by category.',
     })
-    public async getAllTeams(@Param('size') size: number, @Param('page') page: number, @Param('id') id: string): Promise <{teams: Team[], pages: number}>{
+    public async getAllTeams(
+        @Param('size') size: number, 
+        @Param('page') page: number, 
+        @Param('id') id: string
+    ): Promise <{teams: Team[], pages: number}>{
         return this.teamService.getAllTeamsByCategory(size, page, id);
     } 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -71,13 +75,19 @@ export class TeamController {
         status: 200,
         description: 'Team updated'
     })
-    public async editTeamName(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto): Promise<boolean> {
+    public async editTeamName(
+        @Param('id') id: string, 
+        @Body() updateTeamDto: UpdateTeamDto
+    ): Promise<boolean> 
+    {
         return this.teamService.updateName(updateTeamDto, id);
     }
 
     @Put('edit_stats/:id')
     @ApiOperation({summary: 'Edit team stats'})
-    @ApiParam({ name: 'id', description: 'id for the team to edit the stats'})
+    @ApiParam({ name: 'id',
+                description: 'id for the team to edit the stats'
+            })
     @ApiBody({
         description: 'stats to update for the team',
         type: UpdateStatsDto,
@@ -86,14 +96,23 @@ export class TeamController {
         status: 200,
         description: 'Stats updated'
     })
-    public async editTeamStats(@Param('id') id: string, updateStatsDto: UpdateStatsDto): Promise<boolean> {
+    public async editTeamStats(
+        @Param('id') id: string, 
+        updateStatsDto: UpdateStatsDto): Promise<boolean> {
         return this.teamService.updateTeamStats(id, updateStatsDto)
     }
     
 
     @Delete('/:id')
     @ApiOperation({summary: 'Delete team by id'})
-    @ApiParam({name:'id', description: 'id for the team to be deleted'})
+    @ApiParam({
+        name:'id',
+        description: 'id for the team to be deleted'
+    })
+    @ApiResponse({ 
+        status: 200,
+        description: 'Stats updated'
+    })
     public async deleteTeam(@Param('id') id: string): Promise<boolean> {
         return this.teamService.deleteTeam(id);
     }

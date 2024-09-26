@@ -62,7 +62,6 @@ export class TeamService {
           await this.teamRepository.save(teamToSave);
           return true;
         } catch (error) {
-          console.log(error, 'error');
           throw new HttpException(error.message, error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR);
         }
       }
