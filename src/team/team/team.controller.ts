@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team-dto';
 import { Team } from './team.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateTeamDto } from './dto/update-team.dto';
+import { UpdateStatsDto } from './dto/update-stats.dto';
 
 @Controller('team')
 @ApiTags('Team')
@@ -57,4 +59,43 @@ export class TeamController {
     ): Promise<boolean> {
         return this.teamService.uploadImage(image.buffer,100,id,);
     }
+
+    @Put('edit_team/:id')
+    @ApiOperation({summary: "Edit team's data"})
+    @ApiParam({name: 'id', description:'id for the team to edit the data'})
+    @ApiBody({
+        description: 'data for the team to update',
+        type: UpdateTeamDto
+    })
+    @ApiResponse({ 
+        status: 200,
+        description: 'Team updated'
+    })
+    public async editTeamName(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto): Promise<boolean> {
+        return this.teamService.updateName(updateTeamDto, id);
+    }
+
+    @Put('edit_stats/:id')
+    @ApiOperation({summary: 'Edit team stats'})
+    @ApiParam({ name: 'id', description: 'id for the team to edit the stats'})
+    @ApiBody({
+        description: 'stats to update for the team',
+        type: UpdateStatsDto,
+    })
+    @ApiResponse({ 
+        status: 200,
+        description: 'Stats updated'
+    })
+    public async editTeamStats(@Param('id') id: string, updateStatsDto: UpdateStatsDto): Promise<boolean> {
+        return this.teamService.updateTeamStats(id, updateStatsDto)
+    }
+    
+
+    @Delete('/:id')
+    @ApiOperation({summary: 'Delete team by id'})
+    @ApiParam({name:'id', description: 'id for the team to be deleted'})
+    public async deleteTeam(@Param('id') id: string): Promise<boolean> {
+        return this.teamService.deleteTeam(id);
+    }
+    
 }

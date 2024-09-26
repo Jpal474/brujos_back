@@ -1,10 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './team.entity';
 import { Repository } from 'typeorm';
 import { CreateTeamDto } from './dto/create-team-dto';
 import { Category } from 'src/category/category/category.entity';
 import * as sharp from 'sharp';
+import { UpdateTeamDto } from './dto/update-team.dto';
+import { UpdateStatsDto } from './dto/update-stats.dto';
 
 @Injectable()
 export class TeamService {
@@ -65,27 +67,47 @@ export class TeamService {
         }
       }
 
-public async updateName(name: string, teamID:string): Promise<boolean> {
+public async updateName(updateTeamDto: UpdateTeamDto, teamID:string): Promise<boolean> {
     try{
 
-        const found_team = await  this.teamRepository.findOneBy({name: name});
-        if(found_team && found_team.teamID !== teamID){
-            throw new HttpException(
-                'Name already in use',
-                HttpStatus.BAD_REQUEST,
-            );
+        const found_team = await  this.teamRepository.findOneBy({name: updateTeamDto.name});
+        if (found_team && found_team.teamID !== teamID) {
+          throw new HttpException(
+            'Name already registered',
+            HttpStatus.BAD_REQUEST,
+          );
         }
-        
-        found_team.name = name;
-        this.teamRepository.save(found_team);
+        const team = await this.teamRepository.preload({
+          teamID,
+          ... updateTeamDto,
+        });
+        if(!team) {
+          throw new NotFoundException(`Team not found`);
+        }
+        this.teamRepository.save(team);
         return true;
     }
-    catch(error){
+    catch(error){      
         throw new HttpException(error, error.status ? error.status : 500);
     }
 }
 
-// public async updateStats()
+ public async updateTeamStats(teamID: string, updateStatsDto: UpdateStatsDto): Promise<boolean> {
+  const found_team = await this.teamRepository.findOneBy({teamID: teamID})
+  if (!found_team) {
+    throw new HttpException(
+      'Team not found',
+      HttpStatus.NOT_FOUND,
+    );
+  }
+  const team = await this.teamRepository.preload({
+    teamID,
+    ... updateStatsDto,
+  });
+  this.teamRepository.save(team);
+  return true;
+
+ }
 
 public async deleteTeam(id: string): Promise<boolean>{
     try {
