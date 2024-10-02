@@ -52,7 +52,7 @@ export class Team {
     shieldImage: string;
 
     @OneToMany(() => Player, (player) => player.team)
-    @ApiProperty()
+    @ApiProperty({ type: () => Player})
     player: Player[];
 
     @ManyToOne(() => Category, (category) => category.team)

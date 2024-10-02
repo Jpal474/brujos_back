@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team-dto';
 import { Team } from './team.entity';
@@ -50,7 +50,20 @@ export class TeamController {
     
     @Post('uploadImage/:id')
     @ApiOperation({summary: 'Upload logo for the team'})
+    @ApiConsumes('multipart/form-data')
     @ApiParam({name: 'id', description: 'id for the team to upload the image'})
+    @ApiBody({
+        schema:{
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary'
+                }
+            }
+        }
+
+    })    
     @ApiResponse({ 
         status: 200,
         description: 'Image uploaded'

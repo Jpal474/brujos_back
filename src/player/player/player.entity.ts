@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Team } from "src/team/team/team.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Player {
@@ -22,7 +22,7 @@ export class Player {
 
     @ManyToOne(() => Team, (team) => team.player)
     @JoinColumn()
-    @ApiProperty()
+    @ApiProperty({ type: () => Team})
     team: Team;
 
     @Column()

@@ -31,7 +31,7 @@ export class AdminService {
       }
     }
 
-    async updateAdminData(adminID: string, body: UpdateAdminDto): Promise<boolean> {
+  public async updateAdminData(adminID: string, body: UpdateAdminDto): Promise<boolean> {
       try{
       const mail = await this.adminRepository.findOne({
         where:{

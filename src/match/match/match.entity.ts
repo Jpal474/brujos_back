@@ -8,11 +8,11 @@ export class Match {
     @ApiProperty()
     matchID?: string;
 
-    @Column()
+    @Column({ default: '0'})
     @ApiProperty()
     homeTeamScore: string;
 
-    @Column()
+    @Column({ default: '0'})
     @ApiProperty()
     awayTeamScore: string;
 
@@ -28,7 +28,7 @@ export class Match {
     @ApiProperty()
     location: string;
 
-    @Column()
+    @Column({ default: 'POR_JUGAR' })
     @ApiProperty()
     status: string;
 

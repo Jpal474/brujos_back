@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { PlayerPosition } from "../player-position.enum";
 import { IsEnum, IsString } from "class-validator";
+import { PlayerPosition } from "../player-position.enum";
 
-export class CreatePlayerDto {
+export class UpdatePlayerDto {
     @ApiProperty()
     @IsString()
     name: string;
@@ -16,13 +16,6 @@ export class CreatePlayerDto {
     phone: string;
 
     @ApiProperty()
-    @IsString()
-    teamID:string;
-
-    @ApiProperty()
     @IsEnum(PlayerPosition)
     position: PlayerPosition;
-
-    @ApiProperty()
-    image: string;
 }
