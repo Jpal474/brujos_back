@@ -19,12 +19,14 @@ export class TeamService {
 
     public async getAllTeamsByCategory(pageSize: number, pageNumber: number, categoryID: string): Promise<{teams: Team[], pages: number}> {
         try {
-        const query = await this.teamRepository.createQueryBuilder('teams');
-        const all_teams = await this.teamRepository.find({where: {
-            category: {
-                categoryID: categoryID
-            }
-        }})
+        const all_teams = await this.teamRepository
+                          .createQueryBuilder("team")
+                          .orderBy("team.points", "DESC")
+                          .addOrderBy("team.goalDifference", "DESC")
+                          .addOrderBy("team.goalsFor", "DESC")
+                          .addOrderBy("team.goalsAgainst", "ASC")
+                          .addOrderBy("team.name", "ASC")
+                          .getMany();
         if(!all_teams){
             throw new HttpException(
                 'This category does not exist',

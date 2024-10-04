@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTeamDto } from 'src/team/team/dto/create-team-dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { MatchService } from './match.service';
 import { Match } from './match.entity';
+import { UpdateMatchDto } from './dto/update-match.dto';
+import { updateScoreAndStatusDto } from './dto/update-score-status.dto';
+import { updateScoreDto } from './dto/update-score.dto';
 
 @Controller('match')
 @ApiTags('Matches')
@@ -12,6 +15,21 @@ export class MatchController {
     constructor(
         private matchService: MatchService,
     ) {}
+
+    @Get('get_matches/:id')
+    @ApiParam({
+        name: 'id',
+        description: "id for the team to search it's matches"
+    })
+    @ApiResponse({
+        status:200,
+        description: 'matches of the team listed'
+    })
+    public async getMatchesByTeamID(
+        @Param('id') id:string
+    ): Promise<Match[]> {
+        return this.matchService.getAllMatchesByTeamID(id);
+    }
 
     @Get('get_match/:id')
     @ApiParam({
@@ -43,6 +61,69 @@ export class MatchController {
     {
         return this.matchService.createMatch(createMatchDto);
     }
+
+    @Put('edit_match/:id')
+    @ApiParam({
+        name:'id',
+        description: 'id for the match to update'
+    })
+    @ApiBody({
+        description: 'data for the match to update',
+        type: UpdateMatchDto,
+    })
+    @ApiResponse({
+        status:200,
+        description: 'match updated',
+    })
+    public async updateMatchData(
+      @Param('id') id: string,
+      @Body() updateMatchDto: UpdateMatchDto
+    ): Promise<boolean>
+    {
+        return this.matchService.updateMatchData(id, updateMatchDto);
+    }
+
+    @Put('edit_score_and_status/:id')
+    @ApiParam({
+        name: 'id',
+        description: 'id of the match to update the score and the status'
+    })
+    @ApiBody({
+        description: 'score and status of the match',
+        type: updateScoreAndStatusDto
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'match updated'
+    })
+    public async updateScoreAndStatus(
+        @Param('id') id: string,
+        @Body() updateScoreAndStatusDto: updateScoreAndStatusDto
+    ): Promise<boolean> {
+        return this.matchService.updateMatchScoreAndStatus(id, updateScoreAndStatusDto);
+    }
+
+    @Put('edit_score/:id')
+    @ApiParam({
+        name: 'id',
+        description: 'id of the match to update de score',
+    })
+    @ApiBody({
+        description: 'data of the match to update the score',
+        type: updateScoreDto
+    })
+    @ApiResponse({
+        status:200,
+        description: 'match updated'
+    })
+    public async updateScore(
+        id: string,
+        updateScoreDto: updateScoreDto
+    ): Promise<boolean> {
+        return this.matchService.updateMatchScore(id, updateScoreDto);
+    }
+
+
 
 
 }
