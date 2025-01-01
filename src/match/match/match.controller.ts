@@ -16,19 +16,29 @@ export class MatchController {
         private matchService: MatchService,
     ) {}
 
-    @Get('get_matches/:id')
+    @Get('get_matches/:id/:size/:page')
     @ApiParam({
         name: 'id',
         description: "id for the team to search it's matches"
+    })
+    @ApiParam({
+        name: 'size',
+        description: 'number of registers to show'
+    })
+    @ApiParam({
+        name:'page',
+        description: 'number of page to show'
     })
     @ApiResponse({
         status:200,
         description: 'matches of the team listed'
     })
     public async getMatchesByTeamID(
-        @Param('id') id:string
-    ): Promise<Match[]> {
-        return this.matchService.getAllMatchesByTeamID(id);
+        @Param('id') id:string,
+        @Param('size') size: number,
+        @Param('page') page: number,
+    ): Promise<{matches:Match[], pages: number}> {
+        return this.matchService.getAllMatchesByTeamID(id, size, page);
     }
 
     @Get('get_match/:id')

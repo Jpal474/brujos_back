@@ -32,7 +32,7 @@ public async getPlayerByID(playerID: string): Promise<Player> {
     }
 }   
 
-public async getAllPlayers(teamID: string): Promise<Player[]> {
+public async getAllPlayers(teamID: string, size: number, page: number): Promise<{ players:Player[], pages:number}> {
     try {
         const found_team = await this.teamRepository.findOneBy({teamID: teamID});
         if(!found_team) {
@@ -41,22 +41,27 @@ public async getAllPlayers(teamID: string): Promise<Player[]> {
                 HttpStatus.NOT_FOUND
             );
         }
-        const players = await this.playerRepository.find({
+        const all_players = await this.playerRepository.find({
             where: {
                 team: {
                     teamID: teamID
                 }
             }
         })
-        if(!players){
+        if(!all_players){
             throw new HttpException(
                 'Players not foun for the team',
                 HttpStatus.NOT_FOUND
             )
         }
-        return players;
+        const pages = Math.ceil(all_players.length / size);
+        const players = all_players.slice(
+          (page - 1) * size,
+          page * size,
+        );  
+        return { players, pages };
     } catch (error) {
-        
+        throw new HttpException(error.message, error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -97,7 +102,7 @@ public async updatePlayer(playerID: string, updatePlayerDto: UpdatePlayerDto): P
             throw new HttpException(
                 'Player not found',
             HttpStatus.NOT_FOUND
-        )
+        );
         }
         const player = await this.playerRepository.preload({
             playerID,

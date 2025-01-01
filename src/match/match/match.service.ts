@@ -37,8 +37,8 @@ export class MatchService {
         }
     } 
 
-    public async getAllMatchesByTeamID(teamID: string)
-    :Promise<Match[]> {
+    public async getAllMatchesByTeamID(teamID: string, size: number, page: number)
+    :Promise<{matches: Match[], pages:number}> {
         try {
             const found_team = this.teamRespository.findOneBy(
                 {
@@ -52,24 +52,33 @@ export class MatchService {
                 )
             }
 
-            const matches = await this.matchRepository.find({
-                where: {
-                    awayTeam: {
+            const all_matches = await this.matchRepository.find({
+                where: [
+                   { awayTeam: {
                         teamID: teamID
+                       }
                     },
-                    homeTeam: {
+                    { homeTeam: {
                         teamID: teamID
+                       }
                     }
-                }
+                ]
             })
-            if(!matches) {
+            
+            if(!all_matches) {
                 throw new HttpException(
                     'There are no matches registered for the team',
                     HttpStatus.NOT_FOUND
                 )
             }
-
-            return matches;
+            
+            const pages = Math.ceil(all_matches.length / size);
+            const matches = all_matches.slice(
+              (page - 1) * size,
+              page * size,
+            );  
+      return { matches, pages };
+            
         } catch (error) {
             throw new HttpException(error, error.status ? error.status : 500);
         }

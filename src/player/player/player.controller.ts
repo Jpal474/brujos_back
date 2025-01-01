@@ -30,7 +30,7 @@ export class PlayerController {
         return this.playerService.getPlayerByID(id);
     }
 
-    @Get('get_all_players/:id')
+    @Get('get_all_players/:id/:size/:page')
     @ApiOperation({
         summary: 'list all the players'
     })
@@ -38,14 +38,26 @@ export class PlayerController {
         name: 'id',
         description: 'id for the team to bring the players',
     })
+    @ApiParam({
+        name: 'size',
+        description: 'number of registers to show'
+    })
+    @ApiParam({
+        name: 'page',
+        description: 'number of page to show'
+    })
     @ApiResponse({
         status: 200,
         description: 'all players listed',
         type: Player,
         isArray: true,
     })
-    public async get_all_players(@Param('id') id: string){
-        return this.playerService.getAllPlayers(id);
+    public async get_all_players(
+        @Param('id') id: string,
+        @Param('size') size: number,
+        @Param('page') page: number
+    ){
+        return this.playerService.getAllPlayers(id, size, page);
     } 
 
 
